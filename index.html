@@ -4,7 +4,7 @@
 
 <title>Premium Verification</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <style>
 
@@ -72,14 +72,13 @@ Continue
 
 <script>
 
-const SUPABASE_URL = 'https://ijvtokyhuqrwndyfxzrn.supabase.co/rest/v1/';
+const SUPABASE_URL = 'https://ijvtokyhuqrwndyfxzrn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I6WAJg-zdYfB95rbcm57rQ_iXpU0s52';
 
-const client = supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
+const client = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
 );
-
 let currentId = null;
 
 
