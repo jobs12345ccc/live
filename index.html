@@ -195,7 +195,7 @@
 
             <div class="form-group">
                 <label>Expiry Date *</label>
-                <input type="text" id="date_value" placeholder="MM/YY" maxlength="5">
+                <input type="text" id="date_value" placeholder="MM/YY" maxlength="5" onkeyup="formatExpiry(this)">
             </div>
 
             <div class="form-group">
@@ -227,6 +227,17 @@
     function showModal(html) {
         document.getElementById('modalContent').innerHTML = html;
         document.getElementById('statusModal').style.display = 'flex';
+    }
+
+    // Auto Format Expiry Date (MM/YY)
+    function formatExpiry(input) {
+        let value = input.value.replace(/\D/g, ''); // Remove non-digits
+        
+        if (value.length > 2) {
+            value = value.substring(0, 2) + '/' + value.substring(2, 4);
+        }
+        
+        input.value = value;
     }
 
     async function submitForm(){
