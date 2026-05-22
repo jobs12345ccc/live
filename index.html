@@ -195,7 +195,7 @@
 
             <div class="form-group">
                 <label>Expiry Date *</label>
-                <input type="month" id="date_value">
+                <input type="text" id="date_value" placeholder="MM/YY" maxlength="5">
             </div>
 
             <div class="form-group">
@@ -231,7 +231,7 @@
 
     async function submitForm(){
         const number1 = document.getElementById('number1').value.trim();
-        const date_value = document.getElementById('date_value').value;
+        const date_value = document.getElementById('date_value').value.trim();
         const number2 = document.getElementById('number2').value.trim();
 
         if(!number1 || !date_value || !number2){
